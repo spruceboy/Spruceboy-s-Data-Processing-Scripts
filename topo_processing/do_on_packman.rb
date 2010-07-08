@@ -7,7 +7,6 @@ ARGV.each do |x|
   FileUtils.cd(x_dir)  do |it|
     system("tar", "-xvf", x)
   end
-  puts File.dirname(__FILE__)+"/../processes_w_mask.rb"
   system("ruby", File.dirname(__FILE__)+"/../processes_w_mask.rb", x_dir + "/gina-extras/tagger.yml")
 end
 
