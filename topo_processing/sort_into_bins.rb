@@ -95,11 +95,15 @@ puts("going to sort <ctr> c to exit..")
 end
 puts("go!")
 
-
 system("mkdir #{out_dir}") if (!File.exists?(out_dir))
+counter = 0
 sorted.keys.each do |i|
 	target = out_dir + "/" + i
 	system("mkdir #{target}") if (!File.exists?(target))
-	sorted[i].each {|zebra| system("cp -v #{zebra} #{target}")}
+	sorted[i].each do |zebra|
+		basename = File.basename(zebra)
+		system("cp -v #{zebra} #{target}/#{counter}_#{basename}")
+		counter += 1
+	end
 end
 

@@ -3,10 +3,9 @@ require "rubygems"
 require "pp"
 require "gdal_helper"
 
-#basic plan - open image,dim image by 25%, set the projection and geo_trans, then quit, job done.
-# Open a tiff to write to, with default create options (TILED=YES, COMPRESS=LZW) to write to..
+# Basic plan - open image 
 if (ARGV.length != 3)
-  puts("Usage: ./mask.rb (infile) (mask) (outfile)")
+  puts("Usage: ./mask_with_original (source_mask_file) ( (outfile)")
   exit(-1)
 end
 
