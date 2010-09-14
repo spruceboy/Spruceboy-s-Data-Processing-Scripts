@@ -10,6 +10,7 @@ ARGV.each do |x|
   system("ruby", File.dirname(__FILE__)+"/../processes_w_mask.rb", x_dir + "/gina-extras/tagger.yml")
 end
 
-system("gdalwarp", "-rb", "-srcnodata", "0 0 0","-dstnodata", "0 0 0","-co","COMPRESS=DEFLATE", "-co", "TILED=YES", "-co", "BIGTIFF=YES", *Dir.glob("*/*aa.filtered.tif"), "combined.aa.tif")
-system("gdalwarp","-rb",  "-srcnodata", "0 0 0","-dstnodata", "0 0 0","-co","COMPRESS=DEFLATE", "-co", "TILED=YES", "-co", "BIGTIFF=YES", *Dir.glob("*/*geo.filtered.tif"), "combined.geo.tif")
-system("gdalwarp", "-rb", "-srcnodata", "0 0 0","-dstnodata", "0 0 0","-co","COMPRESS=DEFLATE", "-co", "TILED=YES", "-co", "BIGTIFF=YES", *Dir.glob("*/*google.filtered.tif"), "combined.google.tif")
+basename = File.basename(File.dirname(ARGV.first)) + "."
+system("gdalwarp", "-rb", "-srcnodata", "0 0 0","-dstnodata", "0 0 0","-co","COMPRESS=DEFLATE", "-co", "TILED=YES", "-co", "BIGTIFF=YES", *Dir.glob("*/*aa.filtered.tif"), basename + "combined.aa.tif")
+system("gdalwarp","-rb",  "-srcnodata", "0 0 0","-dstnodata", "0 0 0","-co","COMPRESS=DEFLATE", "-co", "TILED=YES", "-co", "BIGTIFF=YES", *Dir.glob("*/*geo.filtered.tif"), basename+ "combined.geo.tif")
+system("gdalwarp", "-rb", "-srcnodata", "0 0 0","-dstnodata", "0 0 0","-co","COMPRESS=DEFLATE", "-co", "TILED=YES", "-co", "BIGTIFF=YES", *Dir.glob("*/*google.filtered.tif"), basename + "combined.google.tif")
