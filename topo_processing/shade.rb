@@ -37,9 +37,9 @@ out_file = ARGV[2]
 gdal_file = GdalFile.new(ARGV[1])
 extents = gdal_file.get_extents
 res = gdal_file.get_geo_transform[1]
-proj = "epsg:900913"
+proj = ARGV[3]
 runner("rm -v #{out_file} #{out_file}.temp.dem.tif")
 runner("gdalwarp -co BIGTIFF=YES -t_srs #{proj} -rcs -co COMPRESS=deflate -tr #{res} #{res} -te #{extents["xmin"]} #{extents["ymin"]} #{extents["xmax"]} #{extents["ymax"]} #{dem_file} #{out_file}.temp.dem.tif")
-runner("gdal_dem2rgb -valid-range '1..9000' -exag 1 -texture #{image_file} #{out_file}.temp.dem.tif #{out_file}.temp.shaded.tif")
-runner(File.dirname(__FILE__)+ "/../mask.rb  #{out_file}.temp.shaded.tif #{image_file} #{out_file} ")
-#runner("rm -vf #{out_file}.temp.shaded.tif #{out_file}.temp.dem.tif ")
+runner("gdal_dem2rgb -valid-range '-10..9000' -exag 1 -texture #{image_file} #{out_file}.temp.dem.tif #{out_file}.temp.shaded.tif")
+runner(File.dirname(__FILE__)+ "/../masker  #{out_file}.temp.shaded.tif #{image_file} #{out_file} ")
+runner("rm -vf #{out_file}.temp.shaded.tif #{out_file}.temp.dem.tif ")

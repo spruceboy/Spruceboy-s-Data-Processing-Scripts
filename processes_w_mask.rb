@@ -101,7 +101,7 @@ ARGV.each {|z|
 		runner("gdal_translate -of PNM #{clean_data_file} #{filtered_base}.pnm")
 		runner("pnmnlfilt 0.0 1 #{filtered_base}.pnm | pnmnlfilt  -0.7 0.8 > #{filtered_base}.filtered.pnm")
 		runner("#{File.dirname(__FILE__)}/copy_geo_info.rb --gdal_args \"-a_nodata '0 0 0' -co COMPRESS=DEFLATE -co TILED=YES -co ZLEVEL=9 -co BIGTIFF=YES\" --geo_source #{clean_data_file} --infile  #{filtered_base}.filtered.pnm --outfile #{filtered_base}.filtered.tif")
-		runner("#{File.dirname(__FILE__)}/mask.rb #{filtered_base}.filtered.tif #{projected_mask_file} #{clean_data_file_filtered}")
+		runner("#{File.dirname(__FILE__)}/masker #{filtered_base}.filtered.tif #{projected_mask_file} #{clean_data_file_filtered}")
 		runner("#{File.dirname(__FILE__)}/add_overviews.rb #{clean_data_file_filtered}")
     	end
     	
