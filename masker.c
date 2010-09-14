@@ -95,7 +95,10 @@ int main( int argc, const char* argv[] )
             GDALRasterIO( mask_band, GF_Read, 0, y_index, xsize , 1, mask_scan_line, xsize , 1, GDT_Byte, 0, 0 );
             
             for(x=0; x < xsize; x++) {
+                /* if mask is set to 0, then mask off...*/
                 if ( mask_scan_line[x] == 0 ) data_scan_line[x]=0;
+                /* if mask is not zero, and data is zero, then unmask..*/
+                if (mask_scan_line[x] != 0 && data_scan_line[x]==0) data_scan_line[x]=1;
             }
             
             /* now write out band..*/
