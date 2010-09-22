@@ -8,21 +8,56 @@
 /* ./saturate <infile> <outfile> */
 /* <infile> .*/
 /* questions or comments? jc@alaska.edu     */
-/* complile like:  gcc $(gdal-config --cflags) -o saturate saturate.c $(gdal-config --libs) */
+/* complile like:  gcc $(gdal-config --cflags) -o saturation_mask saturation_mask.c $(gdal-config --libs) */
+/* Warning - this c code should be enough to frighten small childen - don't read/look without protection. */
 /************************************************************/
+
+
+/* parse options.. */
+int parse ( int argc, char ** argv,char * infile, char * outfile, char * driver)
+{
+    int aflag = 0;
+    int bflag = 0;
+    char *cvalue = NULL;
+    int index;
+    int c;
+    /* Default to PNG..*/
+    strcpy(driver, "PNG");
+    opterr = 0;
+    
+    while ((c = getopt (argc, argv, "hf:")) != -1)
+       switch (c)
+         {
+         case 'h':
+            useage(argv[0]);
+         case 'f':
+           /* NULL is bad -> requires a valid driver..*/
+           if ( optarg == NULL) useage (argv[0]);
+           /* save driver */
+           strcpy(driver, optarg);
+           break;
+         default:
+           useage(argv[0]);
+         }
+    
+    /* requires infile and outfile..*/
+    if ( optind +2 != argc) useage(argv[0]);
+    strcpy(infile, argv[optind]);
+    strcpy(outfile, argv[optind+1]);
+}
 
 
 
 /* Makes a copy of a dataset, and opens it for writing.. */
-GDALDatasetH make_me_a_sandwitch(GDALDatasetH *in_dataset, char *filename)
+GDALDatasetH make_me_a_sandwitch(GDALDatasetH *in_dataset, char *filename, char *driver)
 {
     char **papszOptions = NULL;
     const char *pszFormat = "GTiff";
     GDALDriverH hDriver;
     GDALDatasetH out_gdalfile;
-    hDriver = GDALGetDriverByName( pszFormat );
-    papszOptions = CSLSetNameValue( papszOptions, "TILED", "YES" );
-    papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "DEFLATE" );
+    hDriver = GDALGetDriverByName(driver);
+    /*papszOptions = CSLSetNameValue( papszOptions, "TILED", "YES" );
+    papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "DEFLATE" );*/
     
     /*Create copy..*/
     /*return GDALCreateCopy( hDriver, filename, *in_dataset, FALSE, papszOptions, NULL, NULL );*/
@@ -44,13 +79,12 @@ GDALDatasetH GDAL_open_read(char *file_name)
     }
 }
 
-void ussage(char *progname)
+void useage(char *progname)
 {
-    fprintf(stderr, "Whooowww.. I don't work like that..");
-    fprintf(stderr, "use me like:\n");
-    fprintf(stderr, "%s <infile> <saturation image>\n", progname);
+    fprintf(stderr, "Use me like:\n");
+    fprintf(stderr, "%s [-h] [-f PNG|PNM] <infile> <outfile>\n", progname);
     fprintf(stderr, "\tinfile can be any image that gdal reads\n");
-    fprintf(stderr, "\t<saturation image> will be a single banded tiff)\n");
+    fprintf(stderr, "\t<out file> will be the output file)\n");
     fprintf(stderr, "Problems? Questions? Complain to jay@alaska.edu so he can ignore them..\n\nBy now.\n\n");
     exit(-1);
 }
@@ -72,13 +106,11 @@ int main( int argc, const char* argv[] )
     int             valid_data_pixels[10];
     int             saturated_data_pixels[10];
     int             y_index, x;
+    char            infile[512], outfile[512], driver[32];   /*more elite action require..*/
     GDALRasterBandH  out_band;
     
-    
-    if ( argc != 3 ) {
-        ussage(argv[0]);
-    }
-
+    /* read command line..*/
+    parse(argc, argv, infile, outfile, driver);
     
     GDALAllRegister();
     
@@ -86,8 +118,8 @@ int main( int argc, const char* argv[] )
     CPLSetConfigOption( "GDAL_CACHEMAX", "512" );
 
     /* open datasets..*/
-    in_Dataset = GDAL_open_read( argv[1]);
-    out_Dataset = make_me_a_sandwitch(&in_Dataset, argv[2]);
+    in_Dataset = GDAL_open_read( infile);
+    out_Dataset = make_me_a_sandwitch(&in_Dataset, outfile, driver);
     
     /* Basic info on source dataset..*/
     GDALGetBlockSize(GDALGetRasterBand( in_Dataset, 1 ) , &nBlockXSize, &nBlockYSize );
@@ -114,18 +146,10 @@ int main( int argc, const char* argv[] )
             /* Read data..*/
             data_band =  GDALGetRasterBand( in_Dataset, bands);
             GDALRasterIO( data_band, GF_Read, 0, y_index, xsize , 1, data_scan_line, xsize , 1, GDT_Byte, 0, 0 );
-            /* If first band, then copy into output slice.. */
-            if (bands==1) {
-                unsigned char  data_value;
-                for(x=0; x < xsize; x++) {
-                    /*shift to make darker...*/
-                   out_scan_line[x] = data_scan_line[x] >> 1 ;
-                   if ( out_scan_line[x] ==0 && data_scan_line[x] != 0) {out_scan_line[x] = 1;}
-                }
-            }
             
             /* Loop though, looking for saturated pixels and no-data values.. */
             for(x=0; x < xsize; x++) {
+                out_scan_line[x] = 0;
                 if (  data_scan_line[x] != 0 )  {
                    valid_data_pixels[bands] += 1;
                    if ( data_scan_line[x] == 255 ) {
