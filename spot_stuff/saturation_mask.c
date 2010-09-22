@@ -22,7 +22,7 @@ int parse ( int argc, char ** argv,char * infile, char * outfile, char * driver)
     int index;
     int c;
     /* Default to PNG..*/
-    strcpy(driver, "PNG");
+    strcpy(driver, "PNM");
     opterr = 0;
     
     while ((c = getopt (argc, argv, "hf:")) != -1)
@@ -55,7 +55,17 @@ GDALDatasetH make_me_a_sandwitch(GDALDatasetH *in_dataset, char *filename, char 
     const char *pszFormat = "GTiff";
     GDALDriverH hDriver;
     GDALDatasetH out_gdalfile;
+    char **papszMetadata;
     hDriver = GDALGetDriverByName(driver);
+    
+    
+    /* check that you can use the "create" method..*/
+    papszMetadata = GDALGetMetadata( hDriver, NULL );
+    if( !CSLFetchBoolean( papszMetadata, GDAL_DCAP_CREATE, FALSE ) )
+    {
+        fprintf(stderr,"Driver %s does not support Create() method - can't use it.\n", pszFormat );
+        exit(-1);
+    }
     /*papszOptions = CSLSetNameValue( papszOptions, "TILED", "YES" );
     papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "DEFLATE" );*/
     
@@ -82,9 +92,10 @@ GDALDatasetH GDAL_open_read(char *file_name)
 void useage(char *progname)
 {
     fprintf(stderr, "Use me like:\n");
-    fprintf(stderr, "%s [-h] [-f PNG|PNM] <infile> <outfile>\n", progname);
-    fprintf(stderr, "\tinfile can be any image that gdal reads\n");
-    fprintf(stderr, "\t<out file> will be the output file)\n");
+    fprintf(stderr, "%s [-h] [-f PNM] <infile> <outfile>\n", progname);
+    fprintf(stderr, "\t-f PNM|GTiff -> make a mask in that particular format - defaults to PNM,\n\t should except any format gdal writes\n\tsee http://www.gdal.org/formats_list.html for a list\n");
+    fprintf(stderr, "\t<infile> can be any image that gdal reads\n");
+    fprintf(stderr, "\t<outfile> will be the output saturation mask)\n");
     fprintf(stderr, "Problems? Questions? Complain to jay@alaska.edu so he can ignore them..\n\nBy now.\n\n");
     exit(-1);
 }
