@@ -152,6 +152,8 @@ int main( int argc, const char* argv[] )
     
     /* loop though the lines of the data, looking for no data and saturated pixels..*/
     for (y_index = 0; y_index <GDALGetRasterYSize( in_Dataset ); y_index ++ ) {
+        /* set line to 0..*/
+        for(x=0; x < xsize; x++) { out_scan_line[x] = 0; }
         for (bands=1; bands <= GDALGetRasterCount( in_Dataset ); bands ++ ) {
             GDALRasterBandH data_band;
             /* Read data..*/
@@ -159,8 +161,8 @@ int main( int argc, const char* argv[] )
             GDALRasterIO( data_band, GF_Read, 0, y_index, xsize , 1, data_scan_line, xsize , 1, GDT_Byte, 0, 0 );
             
             /* Loop though, looking for saturated pixels and no-data values.. */
+            
             for(x=0; x < xsize; x++) {
-                out_scan_line[x] = 0;
                 if (  data_scan_line[x] != 0 )  {
                    valid_data_pixels[bands] += 1;
                    if ( data_scan_line[x] == 255 ) {
