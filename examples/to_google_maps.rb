@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#example script to warp a list of files to the google maps projection..
 require "rubygems"
 require "getoptlong"
 
@@ -6,15 +7,9 @@ require "getoptlong"
 #basic template for warping..
 # CACHEMAX controls amount of ram for io caching
 # -wm controls amount of ram for warping..
-command_template = "gdalwarp  -t_srs EPSG:900913 --config GDAL_CACHEMAX 1000 -wm 750 -dstnodata \"0 0 0\" -srcnodata \"0 0 0\" -co COMPRESS=LZW -co BIGTIFF=YES -co TILED=YES %s %s"
+command_template = "gdalwarp -rb -t_srs EPSG:900913 --config GDAL_CACHEMAX 1000 -wm 750 -dstnodata \"0 0 0\" -srcnodata \"0 0 0\" -co COMPRESS=LZW -co BIGTIFF=YES -co TILED=YES %s %s"
 
 tasks = []
-
-#opt = Getopt::Long.getopts( 
-#			["--postfix", Getopt::OPTIONAL], 
-#			["--threads", Getopt::OPTIONAL]
-#		)
-
 
 opts = GetoptLong.new(
   [ '--threads', '-t', GetoptLong::OPTIONAL_ARGUMENT ],
