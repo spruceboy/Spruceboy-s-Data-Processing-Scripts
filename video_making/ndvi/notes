@@ -1,0 +1,7 @@
+this directory contains some very rough scripts used to generate movies from colorized ndvi data.  Its not indended to be usefuly to anyone but me, so YMMV, very much so.
+
+After the frames are generated, turn them into a movie like this:
+mencoder mf://*.jpg -mf w=1280:h=1024:fps=10:type=jpg -ovc x264 -x264encopts subq=6:partitions=all:8x8dct:me=umh:frameref=5:bframes=3:weight_b -o output.avi
+
+encodes to a h264 standard, which appears to work pretty well on windows based machines and is reasonably small.
+
