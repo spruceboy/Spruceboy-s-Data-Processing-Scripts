@@ -1,0 +1,29 @@
+bounds:
+  x_min: -3000000.0
+  y_min: -500000.000
+  x_max:  2500000.0
+  y_max:  3000000.000
+res:
+  x: 5
+  y: 5
+request_size:
+  x: 30000
+  y: 30000  
+proj: "epsg:102006"
+url: "http://dib.gina.alaska.edu/cgi-bin/bdl.cgi?&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image/tiff&LAYERS=bdl_high_res_full&bbox=%.20f,%.20f,%.20f,%.20f&width=%d&height=%d&srs=%s&bgcolor=0x000000"
+blank: "blank"
+murged_blank: "blank_murged.tif"
+result_size:
+  x: 30000
+  y: 30000
+projections:
+  - 26903
+  - 26904
+  - 26905
+  - 26906
+  - 26907
+  - 26908
+  - 900913
+  - 102634
+  - 4326
+  - 26909

@@ -1,0 +1,19 @@
+bounds:
+  x_min: -1000000.000
+  y_min: 1500000.000
+  x_max: -500000.000
+  y_max: 2000000.000
+res:
+  x: 25
+  y: 25
+request_size:
+  x: 6000
+  y: 6000  
+proj: "epsg:102006"
+url: "http://dib.gina.alaska.edu/cgi-bin/bdl.cgi?&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image/tiff&LAYERS=bdl_high_res_full&bbox=%.20f,%.20f,%.20f,%.20f&width=%d&height=%d&srs=%s&bgcolor=0x000000"
+blank: "blank"
+murged_blank: "blank_murged.tif"
+result_size:
+  x: 20000
+  y: 20000
+
