@@ -1,2 +1,6 @@
 *~
 *.swp
+add_mask
+masker
+landsat_archive/frames
+landsat_archive/thumbs
