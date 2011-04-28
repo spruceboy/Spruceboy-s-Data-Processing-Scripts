@@ -1,0 +1,26 @@
+  task :default => [:build]
+ 
+  task :build => [:check_gdal, :build_cc_stuff]
+
+  task :check_gdal do
+    gdal = `which gdal-config`
+    raise ("Gdal not found - are you sure your enviroment is setup properly?") if (gdal=="")
+    gdal_version =  `gdal-config --version`
+    raise ("Your gdal version is pretty old (#{gdal_version}) - get a new one") if (gdal_version<"1.7.0")
+  end
+  
+  task :build_cc_stuff => [:add_mask, :masker]
+  
+  task :add_mask do
+    puts("Building \"add_mask\"")
+    system("gcc $(gdal-config --cflags) -o add_mask add_mask.c $(gdal-config --libs)")
+  end
+  
+  task :masker do
+    puts("Building \"masker\"")
+    system("gcc $(gdal-config --cflags) -o masker masker.c $(gdal-config --libs)")
+  end
+  
+  task :git_pull do
+    system("git pull origin master")
+  end
