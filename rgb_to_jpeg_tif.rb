@@ -33,7 +33,7 @@ end
 
 opts = Trollop::with_standard_exception_handling(parser) do
   o = parser.parse ARGV
-  raise Trollop::HelpNeeded if ARGV.empty? # show help screen
+  raise Trollop::HelpNeeded if ARGV.length != 2 # show help screen
   o
 end
 
@@ -79,7 +79,7 @@ end
 
 #make temp image, compressed + tiled
 puts("Info: generating temp image..")
-runner(["gdal_translate", "-co", "TILED=YES", "-co", "COMPRESS=LZW", infile, tmpfile ], opts)
+runner(["gdal_translate", "-co", "TILED=YES", "-co","BIGTIFF=YES","-co", "COMPRESS=LZW",  infile, tmpfile ], opts)
 
 #add mask
 puts("Info: Adding mask to temp image..")
@@ -92,7 +92,7 @@ runner([File.dirname(__FILE__)+"/add_overviews.rb", tmpfile], opts)
 puts("Info: Generating #{outfile}..")
 additional_options=[]
 additional_options + ["--config", "GDAL_TIFF_INTERNAL_MASK", "TRUE"] if (opts[:internal_mask])
-runner(["gdal_translate","-co","BIGTIFF=YES", "COMPRESS=JPEG","-co","COPY_SRC_OVERVIEWS=YES","-co","PHOTOMETRIC=YCBCR"] + additional_options + [tmpfile, outfile], opts)
+runner(["gdal_translate","-co","BIGTIFF=YES", "-co", "TILED=YES", "COMPRESS=JPEG","-co","COPY_SRC_OVERVIEWS=YES","-co","PHOTOMETRIC=YCBCR"] + additional_options + [tmpfile, outfile], opts)
 
 if (!opts[:internal_mask])
   puts("Info: Adding overviews to mask..")
