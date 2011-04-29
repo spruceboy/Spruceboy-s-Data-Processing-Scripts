@@ -5,6 +5,7 @@ require "trollop"
 # ./do_several_at_once.rb -h is your friend/fiend
 
 
+#wrapper for system - runs command on task
 def runner ( command,task, opts)
   puts("Info: Running: #{command} #{task}") if (opts[:verbrose])
   start_time = Time.now
