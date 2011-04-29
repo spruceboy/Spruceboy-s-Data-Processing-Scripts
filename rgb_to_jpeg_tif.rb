@@ -101,7 +101,7 @@ end
 
 puts("Info: Deleting #{tmpfile} && #{tmpfile}.msk") if (opts[:verbrose])
 runner(["rm", tmpfile], opts)
-runner(["rm", tmpfile+".msk"], opts) if(!opts[:internal_mask])
+runner(["rm", tmpfile+".msk"], opts) #if(!opts[:internal_mask])
 
 puts("Info: Done.")
 
