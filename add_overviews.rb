@@ -34,8 +34,9 @@ opts = GetoptLong.new(
 )
 
 resample = "average"
-gdalargs = "--config GDAL_CACHEMAX 500"
 small_side = false
+gdalargs = ""
+gdalargs = "--config GDAL_CACHEMAX 500" if (!ENV["GDAL_CACHEMAX"])
 begin
   opts.each do |opt, arg|
     case opt
