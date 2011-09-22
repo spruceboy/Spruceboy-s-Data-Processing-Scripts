@@ -29,11 +29,13 @@ end
 opts = GetoptLong.new(
     [ "--gdal_args",          "-c",   GetoptLong::REQUIRED_ARGUMENT ],
     [ "--help",               "-h",   GetoptLong::NO_ARGUMENT ],
-    [ "--resample",          "-r",   GetoptLong::REQUIRED_ARGUMENT ]
+    [ "--resample",          "-r",   GetoptLong::REQUIRED_ARGUMENT ],
+    [ "--min",          "-m",   GetoptLong::NO_ARGUMENT ]
 )
 
 resample = "average"
 gdalargs = "--config GDAL_CACHEMAX 500"
+small_side = false
 begin
   opts.each do |opt, arg|
     case opt
@@ -44,6 +46,8 @@ begin
         gdalargs = arg
       when "--resample"
         resample = arg
+      when "--min"
+	small_side=true
     end
   end
 rescue
@@ -56,6 +60,7 @@ ARGV.each do |item|
   i = 2
   max = geo_info["height"]
   max = geo_info["width"] if ( geo_info["width"] > max )
+  max = geo_info["width"] if ( geo_info["width"] < max ) if (small_side)
 
   while ( i*2 < max )
     list = list + " #{i} "

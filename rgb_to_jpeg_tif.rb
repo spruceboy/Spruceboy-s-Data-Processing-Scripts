@@ -87,7 +87,7 @@ runner([File.dirname(__FILE__)+"/add_mask", tmpfile], opts)
 
 #add overviews..
 puts("Info: Adding overviews to temp image..")
-runner([File.dirname(__FILE__)+"/add_overviews.rb", tmpfile], opts)
+runner([File.dirname(__FILE__)+"/add_overviews.rb", "-m",  tmpfile], opts)
 
 puts("Info: Generating #{outfile}..")
 additional_options=[]
@@ -96,7 +96,7 @@ runner(["gdal_translate","-co","BIGTIFF=YES", "-co", "TILED=YES", "-co", "COMPRE
 
 if (!opts[:internal_mask])
   puts("Info: Adding overviews to mask..")
-  runner([File.dirname(__FILE__)+"/add_overviews.rb", outfile +".msk"], opts)
+  runner([File.dirname(__FILE__)+"/add_overviews.rb", "-m", outfile +".msk"], opts)
 end
 
 puts("Info: Deleting #{tmpfile} && #{tmpfile}.msk") if (opts[:verbrose])
