@@ -92,7 +92,7 @@ runner([File.dirname(__FILE__)+"/add_overviews.rb", "-m",  tmpfile], opts)
 puts("Info: Generating #{outfile}..")
 additional_options=[]
 additional_options += ["--config", "GDAL_TIFF_INTERNAL_MASK", "TRUE"] if (opts[:internal_mask])
-runner(["gdal_translate","-co","BIGTIFF=YES", "-co", "TILED=YES", "-co", "COMPRESS=JPEG","-co","COPY_SRC_OVERVIEWS=YES","-co","PHOTOMETRIC=YCBCR"] + additional_options + [tmpfile, outfile], opts)
+runner(["gdal_translate","-co","BIGTIFF=YES", "-co", "TILED=YES", "-co", "COMPRESS=JPEG","-co","COPY_SRC_OVERVIEWS=YES","-co","PHOTOMETRIC=YCBCR", "-co", "JPEG_QUALITY=90"] + additional_options + [tmpfile, outfile], opts)
 
 if (!opts[:internal_mask])
   puts("Info: Adding overviews to mask..")
