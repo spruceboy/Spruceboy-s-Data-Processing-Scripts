@@ -32,6 +32,7 @@ EOS
   opt :verbrose, "Maxium Verbrosity.", :short => "V"
   opt :dry_run, "Don't actually run the command(s)"
   opt :fiddle, "How much overlap the tiles should have.", :type=>Integer, :default => 24
+  opt :big_tiff, "Make bigtiffs"
 end
 
 opts = Trollop::with_standard_exception_handling(parser) do
@@ -76,7 +77,9 @@ while (x < conf["width"])
     y_end = y + size
     y_end = conf["height"] - 1 if (conf["height"]-1 < y_end)
     
-    command = ["gdal_translate", "-co", "TILED=YES", "-co", "COMPRESS=LZW", "-srcwin", x.to_s, y.to_s, (x_end -x).to_s,( y_end-y).to_s, source_file, out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"]
+    command = ["gdal_translate", "-co", "TILED=YES", "-co", "COMPRESS=LZW"]
+    command += ["-co", "BIGTIFF=YES"] if ( opts[:big_tiff])
+    command +=[ "-srcwin", x.to_s, y.to_s, (x_end -x).to_s,( y_end-y).to_s, source_file, out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"]
     runner(command, opts)
     runner([File.dirname(__FILE__) +"/add_overviews.rb", out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"], opts)
     y += size - fiddle
