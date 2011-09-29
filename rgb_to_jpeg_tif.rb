@@ -29,6 +29,7 @@ EOS
   opt :internal_mask, "Use interal nodata masks"
   opt :verbrose, "Maxium Verbrosity.", :short => "V"
   opt :skip_cache_check, "Skip check of GDAL_CACHEMAX"
+  opt :small_tiff, "Don't use bigtiff option."
 end
 
 opts = Trollop::with_standard_exception_handling(parser) do
@@ -92,7 +93,9 @@ runner([File.dirname(__FILE__)+"/add_overviews.rb", "-m",  tmpfile], opts)
 puts("Info: Generating #{outfile}..")
 additional_options=[]
 additional_options += ["--config", "GDAL_TIFF_INTERNAL_MASK", "TRUE"] if (opts[:internal_mask])
-runner(["gdal_translate","-co","BIGTIFF=YES", "-co", "TILED=YES", "-co", "COMPRESS=JPEG","-co","COPY_SRC_OVERVIEWS=YES","-co","PHOTOMETRIC=YCBCR", "-co", "JPEG_QUALITY=90"] + additional_options + [tmpfile, outfile], opts)
+additional_options += ["-co", "BIGTIFF=YES"] if (!opts[:small_tiff])
+runner(["gdal_translate","-co", "TILED=YES", "-co", "COMPRESS=JPEG","-co","COPY_SRC_OVERVIEWS=YES","-co","PHOTOMETRIC=YCBCR", "-co", "JPEG_QUALITY=90"] + additional_options + [tmpfile, outfile], opts)
+
 
 if (!opts[:internal_mask])
   puts("Info: Adding overviews to mask..")
