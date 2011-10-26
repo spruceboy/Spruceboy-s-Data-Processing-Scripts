@@ -16,12 +16,13 @@ require 'trollop'
 parser = Trollop::Parser.new do
   version "0.0.1 jay@alaska.edu"
   banner <<-EOS
-This util takes a rgb file readable by gdal and converts it to a rgb jpeg compressed tiff with a nodata mask.
+This util takes a file readable by gdal and converts it to a jpeg compressed tiff with a nodata mask.
+If you are doing rgb data, use rgb_to_jpeg_tif.rb, as it will generate a higher quality output using less space.
 
 It assumes the nodata values are 0 for each band.
 
 Usage:
-      rgb_to_jpeg_tif.rb [options] <infile> <outfile>
+      to_jpeg_tif.rb [options] <infile> <outfile>
 where [options] is:
 EOS
 
