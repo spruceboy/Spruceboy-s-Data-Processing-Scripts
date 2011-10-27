@@ -30,6 +30,7 @@ EOS
   opt :skip_cache_check, "Skip check of GDAL_CACHEMAX"
   opt :small_tiff, "Don't use bigtiff option. Meaningfull only in the case of jpeg compressed tifs."
   opt :t_srs, "target projection (for example, \"epsg:3338\")", :type => String
+  opt :s_srs, "source projection (for example, \"epsg:3338\")", :type => String
   opt :jpeg, "make a jpeg compressed tiff"
 end
 
@@ -96,6 +97,7 @@ additional_options=[]
 additional_options += ["--config", "GDAL_TIFF_INTERNAL_MASK", "TRUE"] if (opts[:internal_mask])
 additional_options += ["-co", "BIGTIFF=YES"] if (!opts[:small_tiff])
 proj = ["-t_srs", opts[:t_srs]]
+proj += ["-s_srs", opts[:s_srs]] if (opts[:s_srs])
 runner(["gdalwarp","-dstnodata", "0 0 0", "-rcs", "-co", "TILED=YES", "-co", "COMPRESS=LZW"] + proj + additional_options + [tmpfile, tmpfile +".warp"], opts)
 runner(["gdal_translate", "-co", "TILED=YES", "-co", "COMPRESS=LZW", "-b", "mask", tmpfile, tmpfile + ".mask"], opts)
 runner(["gdalwarp","-co", "TILED=YES", "-co", "COMPRESS=LZW", "-t_srs", opts[:t_srs], tmpfile+".mask", tmpfile + ".mask.warp"], opts)
