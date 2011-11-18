@@ -9,7 +9,7 @@
     raise ("Your gdal version is pretty old (#{gdal_version}) - get a new one") if (gdal_version<"1.7.0")
   end
   
-  task :build_cc_stuff => [:add_mask, :masker]
+  task :build_cc_stuff => [:add_mask, :masker,:no_data_check]
   
   task :add_mask do
     puts("Building \"add_mask\"")
@@ -19,6 +19,11 @@
   task :masker do
     puts("Building \"masker\"")
     system("gcc $(gdal-config --cflags) -o masker masker.c $(gdal-config --libs)")
+  end
+
+  task :no_data_check do 
+    puts("Building \"no_data_check\"")
+    system("gcc $(gdal-config --cflags) -o  no_data_check no_data_check.c $(gdal-config --libs)")
   end
   
   task :git_pull do

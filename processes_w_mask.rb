@@ -6,7 +6,7 @@ require 'yaml'
 require 'pp'
 
 projections = [
-	{ "projection" => "epsg:102006", "projection_tag" => "aa"},
+	{ "projection" => "epsg:3338", "projection_tag" => "aa"},
 	{ "projection" => "epsg:900913", "projection_tag" => "google" },
 	{ "projection" =>"epsg:4326",  "projection_tag" => "geo"}]
 
