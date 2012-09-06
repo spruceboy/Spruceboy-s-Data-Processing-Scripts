@@ -33,6 +33,6 @@
 
   task :get_gcp do
     puts("Building \"get cgp\"")
-    system("gcc $(gdal-config --cflags) -o get_cgp get_gcp.c $(gdal-config --libs)")
+    system("gcc $(gdal-config --cflags) -o get_gcp get_gcp.c $(gdal-config --libs)")
   end
 
