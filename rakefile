@@ -9,7 +9,7 @@
     raise ("Your gdal version is pretty old (#{gdal_version}) - get a new one") if (gdal_version<"1.7.0")
   end
   
-  task :build_cc_stuff => [:add_mask, :masker,:no_data_check]
+  task :build_cc_stuff => [:add_mask, :masker,:no_data_check, :get_gcp]
   
   task :add_mask do
     puts("Building \"add_mask\"")
@@ -29,3 +29,10 @@
   task :git_pull do
     system("git pull origin master")
   end
+
+
+  task :get_gcp do
+    puts("Building \"get cgp\"")
+    system("gcc $(gdal-config --cflags) -o get_cgp get_gcp.c $(gdal-config --libs)")
+  end
+
