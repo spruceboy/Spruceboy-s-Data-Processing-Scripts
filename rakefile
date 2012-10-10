@@ -9,7 +9,7 @@
     raise ("Your gdal version is pretty old (#{gdal_version}) - get a new one") if (gdal_version<"1.7.0")
   end
   
-  task :build_cc_stuff => [:add_mask, :masker,:no_data_check, :get_gcp]
+  task :build_cc_stuff => [:add_mask, :masker,:no_data_check, :get_gcp, :modis_natural_color_stretch]
   
   task :add_mask do
     puts("Building \"add_mask\"")
@@ -33,6 +33,12 @@
 
   task :get_gcp do
     puts("Building \"get cgp\"")
-    system("gcc $(gdal-config --cflags) -o get_gcp get_gcp.c $(gdal-config --libs)")
+    system("gcc -g $(gdal-config --cflags) -o get_gcp get_gcp.c $(gdal-config --libs)")
   end
+
+  task :modis_natural_color_stretch do
+    puts("Building \":modis_natural_color_stretch\"")
+    system("gcc $(gdal-config --cflags) -o modis_natural_color_stretch modis_natural_color_stretch.c $(gdal-config --libs)")
+  end
+
 

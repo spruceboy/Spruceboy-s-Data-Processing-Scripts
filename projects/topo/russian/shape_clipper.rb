@@ -162,10 +162,10 @@ ARGV.each do |x|
 		#now make a shapefile with the split up outline..
 		system("ogr2ogr -t_srs epsg:4326 "  + 
 			"#{basename}.tmp.shp #{basename}.shp")
-		system("ogr2ogr -t_srs epsg:4326 -segmentize 0.00001 "  + 
+		system("ogr2ogr -t_srs epsg:4326 -segmentize 0.001 "  + 
                         "#{basename}.msk.shp #{basename}.tmp.shp")
-
-		["3572", "3573", "3574", "3575", "3576", "3338", "4326", "900913"].each do |proj|
+		#["3572", "3573", "3574", "3575", "3576", "3338", "4326", "900913"]
+		["3572", "3573", "3574", "3575", "3576", "4326", "900913"].each do |proj|
 			warp_and_clip(basename, proj, proj)
 		end
 

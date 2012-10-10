@@ -173,9 +173,9 @@ ARGV.each do |x|
 		mask(basename+".tif", basename+".mask.tif", basename+".masked.tif")
 		source_projection = get_full_projection("#{basename}.masked.tif")
 		File.open("source.prj", "w") {|fd| fd.write(source_projection.join("\n"))}
-		warp_and_clip(basename+".masked.tif", basename, "3338", "aa", "source.prj")	
-		warp_and_clip(basename+".masked.tif",basename, "900913", "google", "source.prj")
-		warp_and_clip(basename+".masked.tif",basename, "3572", "3572", "source.prj")
-		warp_and_clip(basename+".masked.tif",basename, "4326", "geo", "source.prj")
+                ["3572", "3573", "3574", "3575", "3576", "4326", "900913"].each do |proj|
+			warp_and_clip(basename+".masked.tif", basename, proj, proj, "source.prj")
+                end
+
 	end
 end
