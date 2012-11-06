@@ -1,0 +1,49 @@
+Grid 203:
+Grid Width: 7239
+Grid Height: 8384
+Grid Map Units per Cell: 1001.128
+Map Projection: Polar Stereographic (ellipsoid)
+Map Reference Latitude:90.0
+Map Second Reference Latitude:60.0
+Map Reference Longitude:-150.0
+Map Equatorial Radius:6378137
+Map Polar Radius:6356752.314
+Map Origin Latitude:44.73
+Map Origin Longitude:115.7
+Map Eccentricity:0.0818191910435
+Map Eccentricity Squared:0.006785161574
+
+
+projection?
++proj=stere +lat_0=90 +lat_ts=60 +lon_0=-150 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs
+
+corners:
+0   2
+
+1   3
+
+#bad corners
+0) 44.730000 115.700000
+1) 13.130003 178.289198
+2) 67.998380 -50.758988
+3) 19.901981 -134.061641
+
+#correct corners..
+0) 44.730000 115.700000
+1) 19.039778 174.208205
+2) 57.673202 -53.813362
+3) 24.269562 -123.42935
+
+#projected
+0) -4955851.59  372632.35
+1) -4955851.53  -6873532.11
+2) 3437605.56   372632.34
+3) 3437605.66   -6873532.07
+
+
+#from docs, must be wrong (slanted, not square in projected cordinates..)
+-4952880.64     -6857999.40
+-4965394.47     381979.11
+3440984.88      382320.00
+3431067.42      -6861850.75
+

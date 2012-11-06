@@ -134,7 +134,7 @@ int main( int argc, const char* argv[] )
 
 
     /* ussage..*/
-    if (argc != 2 ) ussage();
+    if (argc != 3 ) ussage();
     
     /* Set cache to something reasonable.. - 1/2 gig*/
     CPLSetConfigOption( "GDAL_CACHEMAX", "512" );
