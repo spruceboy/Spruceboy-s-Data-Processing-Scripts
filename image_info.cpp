@@ -6,6 +6,10 @@
 #define MAX_BANDS (30)
 #include <limits.h>
 #include <float.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <math.h>
 
 
 
@@ -46,6 +50,8 @@ void gdal_init() {
 }
 
 #define YAML_INDENT ("  ")
+//does the actual work. valid_start and valid_stop are not currently used..
+//if nodatad==NAN, then look at the data for nodata values.
 void examine_data ( std::vector<GDALRasterBand  *> bands, double nodatad, double *valid_start=NULL, double *valid_stop=NULL ) {
 	float 		*pafScanline;
 	int 		*paiScanline;
@@ -54,6 +60,15 @@ void examine_data ( std::vector<GDALRasterBand  *> bands, double nodatad, double
 	bool		floating_point=false;
 	int		nXSize;
 	int		nYSize;
+	int 		pbSuccess = NULL;
+
+
+	
+
+	//TAKE NOTE!
+	//if nodatad == NAN, then get nodata value directly from tiff.
+	if (isnan(nodatad) )  
+		nodatad = bands[0]->GetNoDataValue();
 
 	//less typing..
 	nXSize=bands[0]->GetXSize();
@@ -62,7 +77,7 @@ void examine_data ( std::vector<GDALRasterBand  *> bands, double nodatad, double
 
 
 	//floating point flag..
-	if (bands[0]->GetRasterDataType()==GDT_Float32) floating_point = true;
+	if (bands[0]->GetRasterDataType()==GDT_Float32 || bands[0]->GetRasterDataType()==GDT_Float64) floating_point = true;
 
 	if (floating_point) {
 		nodataf = (float)nodatad;		
@@ -110,6 +125,7 @@ void examine_data ( std::vector<GDALRasterBand  *> bands, double nodatad, double
 		std::cout << YAML_INDENT << "overviews: " << band->GetOverviewCount() << "\n";
 		std::cout << YAML_INDENT << "valid_pixels: " << valid_data << "\n";
 		std::cout << YAML_INDENT << "nodata_pixels: " << nYSize*nXSize-valid_data << "\n";
+		std::cout << YAML_INDENT << "nodata_value: " << nodatad << "\n";
 		if ( floating_point ) {
 			std::cout << YAML_INDENT << "min: " << fmin << "\n";
 			std::cout << YAML_INDENT << "max: " << fmax << "\n";
@@ -122,7 +138,7 @@ void examine_data ( std::vector<GDALRasterBand  *> bands, double nodatad, double
 	
 }
 
-
+//export some basic stats..
 void get_basic_stats( GDALDataset  *poDataset) {
 	double padfTransform[6];
 
@@ -137,20 +153,76 @@ void get_basic_stats( GDALDataset  *poDataset) {
 		std::cout << "- " << v << "\n";
 }
 
+void ussage(){
+	std::cout << "This tool provides basic information about an image in yaml format.\n";
+        std::cout << "Ussage:\n";
+        std::cout << "\t\timage_info (-h|--help) (-n|nodata <nodata_value>) input_file\n";
+        exit(0);
+}
+
+void parse_command_line(int argc, char **argv, char *infile, double &nodata) {
+	int c;
+     
+       	while (1)
+         {
+           static struct option long_options[] =
+             {
+               /* These options set a flag. */
+               {"help", no_argument, 0, 'v'},
+               {"nodata",  required_argument, 0, 'n'},
+               {0, 0, 0, 0}
+             };
+           /* getopt_long stores the option index here. */
+           int option_index = 0;
+     
+           c = getopt_long (argc, argv, "h:n:",
+                            long_options, &option_index);
+     
+           /* Detect the end of the options. */
+           if (c == -1)
+             break;
+     
+           switch (c)
+             {
+             case 'h':
+		ussage();
+		exit(0);
+             case 'n':
+		nodata = atof(optarg);
+               break;
+             }
+         }
+
+
+	if (optind + 1== argc)
+         {
+		strcpy(infile,argv[optind]);
+		std::cout << "infile: " << infile << "\n";
+         }
+	else 
+	 {
+		ussage();
+	 }
+     
+}
 
 
 int main (int argc, char **argv) {
 	GDALDataset  *poDataset;
 	GDALRasterBand  *poBand;
+	char infile[1024];
+	double nodata=NAN;
 	std::vector<GDALRasterBand  *> bands;
+
+	parse_command_line(argc,argv,infile,nodata);
+
 
 	gdal_init();
 
-	poDataset = gdal_open(argv[1]);
+	poDataset = gdal_open(infile);
 
 	get_basic_stats(poDataset);	
-	get_basic_stats(poDataset);
 	bands = get_bands(poDataset);
 	
-	examine_data(bands, 0.0);
+	examine_data(bands, nodata);
 }
