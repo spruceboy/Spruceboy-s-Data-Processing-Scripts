@@ -72,10 +72,10 @@ while (x < conf["width"])
   yi = 0
   while (y < conf["height"])
     x_end = x + size
-    x_end = conf["width"] -1 if (conf["width"]-1 < x_end)
+    x_end = conf["width"] if (conf["width"] < x_end)
     
     y_end = y + size
-    y_end = conf["height"] - 1 if (conf["height"]-1 < y_end)
+    y_end = conf["height"] if (conf["height"] < y_end)
     
     command = ["gdal_translate", "-co", "TILED=YES", "-co", "COMPRESS=LZW"]
     command += ["-co", "BIGTIFF=YES"] if ( opts[:big_tiff])
