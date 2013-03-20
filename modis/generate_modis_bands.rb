@@ -162,9 +162,9 @@ def calibrate (hdf_dir, outfile_base )
        	hdf_hk= hdf_hk.first
        	hdf_qk= hdf_qk.first
 
-	system("crefl -f -v -1km #{hdf_hk} #{hdf_qk} #{hdf_1k} -of=#{outfile_base}.crefl.1km.hdf")
-	system("crefl -f -v -500m #{hdf_hk} #{hdf_qk} #{hdf_1k} -of=#{outfile_base}.crefl.hkm.hdf")
-	system("crefl -f -v -250m #{hdf_hk} #{hdf_qk} #{hdf_1k} -of=#{outfile_base}.crefl.qkm.hdf")
+	system("crefl --verbose --1km #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.1km.hdf")
+	system("crefl --verbose --500m #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.hkm.hdf")
+	system("crefl --verbose  #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.qkm.hdf")
 	puts("INFO: Atm corrected.")
 end
 
