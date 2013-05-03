@@ -40,7 +40,6 @@ corners:
 2) 3437605.56   372632.34
 3) 3437605.66   -6873532.07
 
-
 #from docs, must be wrong (slanted, not square in projected cordinates..)
 -4952880.64     -6857999.40
 -4965394.47     381979.11
