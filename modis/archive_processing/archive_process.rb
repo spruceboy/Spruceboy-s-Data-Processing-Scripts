@@ -6,10 +6,14 @@ require "trollop"
 
 
 #wrapper for system - runs command on task
-def runner ( command,task, opts)
+def runner ( command,task, out, opts)
   puts("Info: Running: #{command} #{task}") if (opts[:verbrose])
   start_time = Time.now
-  system(command + " " + task)
+
+  File.open(out, "w") do |fd|
+  	fd.write(IO.popen([command,:err=>[:child, :out]]).readlines().join())
+  end
+
   puts("Info: Done in #{(Time.now - start_time)/60.0}m.") if (opts[:verbrose])
 end
 
@@ -65,7 +69,8 @@ threads = []
                         break if (todo == nil)
 			todo.chomp!
                         puts("Info: Running #{opts[:command_to_run]} #{todo}")
-                        runner(opts[:command_to_run], todo, opts) if (!opts[:dry_run])
+                        runner(opts[:command_to_run], todo, File.basename(todo)+".out", opts) if (!opts[:dry_run])
+			sleep(0.5)
                 end
         end
 end

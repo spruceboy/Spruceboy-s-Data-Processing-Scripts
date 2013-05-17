@@ -17,7 +17,7 @@ ARGV.each do |i|
 
 	done = done_dir + "/" + File.basename(i)
 	working = File.basename(i)
-	#next if (File.exists?(done) || File.exists?(working))
+	next if (File.exists?(done) || File.exists?(working))
 
 	system("mkdir -v #{working}")
 

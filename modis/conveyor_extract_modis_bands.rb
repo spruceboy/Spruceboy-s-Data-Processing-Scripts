@@ -13,7 +13,7 @@ FileUtils.cd(l1_dir) do
 
 	basename = File.basename(x.first, ".cal1000.hdf")
 	target = target_dir + "/" +  basename
-	system("mkdir #{target}")
+	system("mkdir -v #{target}")
 	[".geo.hdf", ".cal1000.hdf", ".cal250.hdf", ".cal500.hdf"].each do |z|
 		z = basename + z
 		system("cp -l -v #{z} #{target}") if (File.exists?(z))
