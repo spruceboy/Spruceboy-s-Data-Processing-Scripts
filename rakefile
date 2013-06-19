@@ -9,7 +9,7 @@
     raise ("Your gdal version is pretty old (#{gdal_version}) - get a new one") if (gdal_version<"1.7.0")
   end
   
-  task :build_cc_stuff => [:add_mask, :masker,:no_data_check, :get_gcp, :modis_natural_color_stretch, :image_info]
+  task :build_cc_stuff => [:add_mask, :masker,:no_data_check, :get_gcp, :modis_natural_color_stretch, :image_info, :npp_natural_color_stretch]
   
   task :add_mask do
     puts("Building \"add_mask\"")
@@ -43,8 +43,9 @@
 
   task :image_info  do 
     puts("Building image_info..")
-    system("g++  $(gdal-config --cflags) image_info.cpp $(gdal-config --libs)")
+    system("g++ -Wno-conversion-null  $(gdal-config --cflags) -o image_info image_info.cpp $(gdal-config --libs)")
   end
 
-
-
+  task :npp_natural_color_stretch do
+    system(" gcc -O3  $(gdal-config --cflags) -o npp_natural_color_stretch npp_natural_color_stretch.c $(gdal-config --libs)")
+  end
