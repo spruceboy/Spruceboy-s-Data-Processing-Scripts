@@ -21,7 +21,9 @@ end
 
 
 def get_geo_info (path)
-  return YAML.load(`gdal_list_corners #{path}`)  
+  yaml_input = `gdal_list_corners #{path}`
+  yaml_input.gsub!("- '", "- \"").gsub!("'\n", "\"\n").gsub!(": '", ": \"")
+  return YAML.load(yaml_input)
 end
 
 ##
