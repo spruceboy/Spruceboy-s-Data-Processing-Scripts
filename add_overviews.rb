@@ -55,6 +55,9 @@ rescue
     puts("Hmmm, errored out while arg processing.. not sure what the deal is..")
 end
 
+
+small_side=true
+
 ARGV.each do |item|
   geo_info = get_geo_info(item)
   list = ""
