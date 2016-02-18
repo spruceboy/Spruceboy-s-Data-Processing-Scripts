@@ -82,7 +82,7 @@ end
 
 #make temp image, compressed + tiled
 puts("Info: generating temp image..")
-runner(["gdal_translate", "-co", "TILED=YES", "-co","BIGTIFF=YES","-co", "COMPRESS=LZW",  infile, tmpfile ], opts)
+runner(["gdal_translate", "-co", "TILED=YES", "-co","BIGTIFF=YES","-co", "COMPRESS=DEFLATE", "-co", "ZLEVEL=9",  infile, tmpfile ], opts)
 
 #add mask
 puts("Info: Adding mask to temp image..")

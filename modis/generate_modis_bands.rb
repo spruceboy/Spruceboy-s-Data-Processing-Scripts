@@ -26,7 +26,7 @@ projection_confs = {
 }
 
 #should be busted out into a seperate config file..
-modis_band_mapper = {
+modis_band_mapper_long = {
 		"ATM1"=>".250m_CorrRefl_01.tif", 
 		"ATM3"=>".500m_CorrRefl_03.tif", 
 		"8"=>".1000m_EV_1KM_RefSB_b0.tif", 
@@ -72,6 +72,23 @@ modis_band_mapper = {
 		"34"=>".1000m_EV_1KM_Emissive_b13.tif", 
 		"35"=>".1000m_EV_1KM_Emissive_b14.tif", 
 		"36"=>".1000m_EV_1KM_Emissive_b15.tif"}
+modis_band_mapper = {
+                "ATM1"=>".250m_CorrRefl_01.tif",
+                "ATM3"=>".500m_CorrRefl_03.tif",
+                "1"=>".250m_EV_250_RefSB_b0.tif",
+                "2"=>".250m_EV_250_RefSB_b1.tif",
+                "3"=>".500m_EV_500_RefSB_b0.tif",
+                "6"=>".500m_EV_500_RefSB_b3.tif",
+                "7"=>".500m_EV_500_RefSB_b4.tif",
+                "1_500m"=>".500m_EV_250_Aggr500_RefSB_b0.tif",
+                "2_500m"=>".500m_EV_250_Aggr500_RefSB_b1.tif",
+                "ATM1_500"=>".500m_CorrRefl_01.tif",
+                "ATM4"=>".500m_CorrRefl_04.tif",
+                "30"=>".1000m_EV_1KM_Emissive_b9.tif",
+                "31"=>".1000m_EV_1KM_Emissive_b10.tif",
+                "32"=>".1000m_EV_1KM_Emissive_b11.tif",
+                "33"=>".1000m_EV_1KM_Emissive_b12.tif"}
+
 
 
 #Cleans up tifs and renames them to something useful
@@ -162,9 +179,15 @@ def calibrate (hdf_dir, outfile_base )
        	hdf_hk= hdf_hk.first
        	hdf_qk= hdf_qk.first
 
-	system("crefl --verbose --1km #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.1km.hdf")
-	system("crefl --verbose --500m #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.hkm.hdf")
-	system("crefl --verbose  #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.qkm.hdf")
+	#Usage: crefl [-f] [-1km|-500m] [-v] [-range=min,max] <MOD02HKM file> <MOD02QKM file> <MOD021KM|MOD02CRS|MOD09CRS file> -of=<output file> -bands=<band1,band2,band3,...>   
+	#system("crefl --verbose --1km #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.1km.hdf")
+	#system("crefl --verbose --500m #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.hkm.hdf")
+	#system("crefl --verbose  #{hdf_hk} #{hdf_qk} #{hdf_1k} --of=#{outfile_base}.crefl.qkm.hdf")
+	#
+	system("crefl -v -1km #{hdf_hk} #{hdf_qk} #{hdf_1k} -of=#{outfile_base}.crefl.1km.hdf")
+	system("crefl -v -500m #{hdf_hk} #{hdf_qk} #{hdf_1k} -of=#{outfile_base}.crefl.hkm.hdf")
+	system("crefl -v  #{hdf_hk} #{hdf_qk} #{hdf_1k} -of=#{outfile_base}.crefl.qkm.hdf")
+
 	puts("INFO: Atm corrected.")
 end
 
@@ -207,11 +230,21 @@ end
 
 
 basename = ARGV.first
+puts("generate_modis_bands.rb: using #{basename}")
+
+
+[".geo.hdf", ".cal500.hdf", ".cal1000.hdf"].each do |i|
+	raise ("can't find #{basename}#{i}") if (!File.exists?("#{basename}#{i}"))
+end
+
 
 #full_bands = 'EV_500_RefSB, 1, 1, 1, 1, 1; EV_500_RefSB_Uncert_Indexes, 1, 1, 1, 1, 1; EV_250_Aggr500_RefSB, 1, 1; EV_250_Aggr500_RefSB_Uncert_Indexes, 1, 1; EV_250_Aggr500_RefSB_Samples_Used, 1, 1'
-full_bands = "EV_500_RefSB, 1, 1, 1, 1, 1; EV_250_Aggr500_RefSB, 1, 1; EV_250_Aggr500_RefSB_Uncert_Indexes, 1, 1; EV_250_Aggr500_RefSB_Samples_Used, 1, 1"
+#full_bands = "EV_500_RefSB, 1, 1, 1, 1, 1; EV_250_Aggr500_RefSB, 1, 1; EV_250_Aggr500_RefSB_Uncert_Indexes, 1, 1; EV_250_Aggr500_RefSB_Samples_Used, 1, 1"
+full_bands = "EV_500_RefSB, 1, 1, 1, 1, 1; EV_250_Aggr500_RefSB, 1, 1"
 
-onek_bands = 'EV_1KM_RefSB, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1; EV_1KM_Emissive, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1; EV_Band26'
+#onek_bands = 'EV_1KM_RefSB, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1; EV_1KM_Emissive, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1; EV_Band26'
+
+onek_bands = 'EV_1KM_RefSB, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1; EV_1KM_Emissive, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1; EV_250_Aggr1km_RefSB, 1, 1; EV_500_Aggr1km_RefSB, 1, 1, 1, 1, 1; EV_Band26'
 
 puts projection_confs.keys
 proj_conf = projection_confs[opts[:area]]
@@ -231,5 +264,6 @@ end
 project_data(basename + ".cal1000.hdf", basename + ".geo.hdf", basename + "." + opts[:area] + ".1000m", onek_bands, proj_conf, 1000, nil)
 
 reformat(basename + "." + opts[:area], modis_band_mapper)
+
 
 

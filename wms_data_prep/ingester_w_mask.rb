@@ -30,7 +30,7 @@ def do_repo (x,mask, epsg,source_proj, ext,note)
         projected_mask = "#{@workdir}/#{base}_#{note}_mask.tif"
 
 	puts("do_repo: warping datafile..")
-        s  = "gdalwarp -s_srs '#{source_proj}' #{@COMPRESS_OPS} -co TILED=YES -co BIGTIFF=YES #{@resampling} -srcnodata \"#{@no_data_in}\" -dstnodata \"#{@no_data_out}\" -t_srs '#{epsg}' #{x} #{output_path}"
+        s  = "gdalwarp -rb -s_srs '#{source_proj}' #{@COMPRESS_OPS} -co TILED=YES -co BIGTIFF=YES #{@resampling} -srcnodata \"#{@no_data_in}\" -dstnodata \"#{@no_data_out}\" -t_srs '#{epsg}' #{x} #{output_path}"
         runner(s)
         puts("do_repo: warping mask..")
         s  = "gdalwarp #{@COMPRESS_OPS} -co TILED=YES -co BIGTIFF=YES -srcnodata 255 -dstnodata 0 -t_srs '#{epsg}' #{mask} #{projected_mask}"
@@ -53,7 +53,7 @@ def add_overviews (i)
 	puts("add_overviews: done")
 end
 
-def scale (x,epsg,source_proj,scale,out)
+def scale(x,epsg,source_proj,scale,out)
         output_path=out+".tif"
         
         puts("scale: making overview image..")
@@ -146,7 +146,7 @@ end
 
 ##
 # Extracts a tile..
-def do_tile ( source, x,y,xsize,ysize,fl_name, edge=false)
+def do_tile( source, x,y,xsize,ysize,fl_name, edge=false)
         #s = "gdal_translate -srcwin #{x} #{y} #{xsize} #{ysize} #{source} #{name}.tif"
         #runner(s)
 	s = "gdal_translate -a_nodata \"#{@no_data_out}\" -co COMPRESS=LZW -co TILED=YES  #{@bands_working} -srcwin #{x} #{y} #{xsize} #{ysize} #{source} #{fl_name}.tif"
@@ -177,19 +177,19 @@ def chop ( source_image, set )
 			name = @finaldir + "/" + @scene_id + set + sprintf("_tile_%d_%d", working_x, working_y)
                 	if ( (working_y*size + size > y) || (working_x*size + size > x) )
                         	if ( (working_y*size + size > y) && (working_x*size + size > x) )
-                                	do_tile (source_image, working_x*size, working_y*size, x-working_x*size, y-working_y*size, name,true) 
+                                	do_tile(source_image, working_x*size, working_y*size, x-working_x*size, y-working_y*size, name,true) 
                         	else
-                                if (working_x*size + size > x) 
-                                        do_tile (source_image, working_x*size, working_y*size, x-working_x*size, size, name,true)
-                                else
-                                        do_tile (source_image, working_x*size, working_y*size, size, y-working_y*size, name,true)
-                                end
-                        end
+                                	if (working_x*size + size > x) 
+                                        	do_tile(source_image, working_x*size, working_y*size, x-working_x*size, size, name,true)
+                                	else
+                                        	do_tile(source_image, working_x*size, working_y*size, size, y-working_y*size, name,true)
+                                	end
+                        	end
                 	else
                         	if ( working_x == 0 || working_y == 0 )
-					do_tile (source_image, working_x*size, working_y*size, size, size,name,true)
+					do_tile(source_image, working_x*size, working_y*size, size, size,name,true)
 				else
-					do_tile (source_image, working_x*size, working_y*size, size, size,name)  
+					do_tile(source_image, working_x*size, working_y*size, size, size,name)  
 				end
                 	end
                 	working_y += 1
@@ -228,7 +228,7 @@ ARGV.each {|z|
   		@projection_in = cfg["ingest"]["s_srs"]
 	end
 	@scene_id = cfg["sv_metadata_basic"]["id"]
-	@resampling ="-rcs"
+	@resampling ="-rb"
   	#@debug = true
 
 	if (!File.exists?(ingest_dir))
@@ -242,7 +242,7 @@ ARGV.each {|z|
 	set = 1
 	pp  cfg["data"]
 	
-	x = File.dirname(z) + "/" + File.basename(z,".yml")+ "/"+ cfg["data"]["image_file"]
+	x = File.dirname(z) + "/" + File.basename(z,".yaml")+ "/"+ cfg["data"]["image_file"]
 	
 	ext = "." + x.split(".").last
 	# Step 1 - make a temp directory to do work in..
@@ -288,7 +288,7 @@ ARGV.each {|z|
 
 		 ##
 		 # Step 5 - Scale to a small tif
-		 scale (y,@projection, source_projection, proj["overview_res"] , ingest_dir+"/"+@scene_id+"_overview_"+@projection_tag)
+		 scale(y,@projection, source_projection, proj["overview_res"] , ingest_dir+"/"+@scene_id+"_overview_"+@projection_tag)
 
 		 ##
 		 # Step 7 - generate tile outlines..
