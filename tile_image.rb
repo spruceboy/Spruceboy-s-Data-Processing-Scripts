@@ -76,12 +76,19 @@ while (x < conf["width"])
     
     y_end = y + size
     y_end = conf["height"] if (conf["height"] < y_end)
-    
-    command = ["gdal_translate", "-co", "TILED=YES", "-co", "COMPRESS=LZW"]
-    command += ["-co", "BIGTIFF=YES"] if ( opts[:big_tiff])
-    command +=[ "-srcwin", x.to_s, y.to_s, (x_end -x).to_s,( y_end-y).to_s, source_file, out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"]
-    runner(command, opts)
-    runner([File.dirname(__FILE__) +"/add_overviews.rb", out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"], opts)
+
+    tile_name = out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"
+   
+    if (File.exists?(tile_name) )
+	puts("INFO: Skipping #{tile_name} as it already exists.")
+    else
+    	command = ["gdal_translate", "-co", "TILED=YES", "-co", "COMPRESS=DEFLATE", "-co", "ZLEVEL=9", "-co", "PREDICTOR=2"]
+    	command += ["-co", "BIGTIFF=YES"] if ( opts[:big_tiff])
+    	command +=[ "-srcwin", x.to_s, y.to_s, (x_end -x).to_s,( y_end-y).to_s, source_file, out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"]
+  
+    	runner(command, opts)
+    	runner([File.dirname(__FILE__) +"/add_overviews.rb", out_file + ".tile." + xi.to_s+"."+yi.to_s+".tif"], opts)
+    end
     y += size - fiddle
     yi += 1
   end
